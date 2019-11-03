@@ -150,6 +150,10 @@
     <MASM Include="main.asm">
       <FileType>Document</FileType>
     </MASM>
+    <MASM Include="Parse.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Parse.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

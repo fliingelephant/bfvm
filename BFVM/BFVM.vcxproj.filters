@@ -21,10 +21,18 @@
     <MASM Include="main.asm">
       <Filter>源文件</Filter>
     </MASM>
+    <MASM Include="Parse.asm">
+      <Filter>源文件</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="File.inc">
       <Filter>头文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Parse.inc">
+      <Filter>头文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

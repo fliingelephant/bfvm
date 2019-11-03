@@ -14,11 +14,13 @@ INCLUDE C:\masm32\include\msvcrt.inc
 INCLUDELIB C:\masm32\lib\msvcrt.lib
 
 INCLUDE File.inc
+INCLUDE Parse.inc
 
 .CODE
 main PROC
 	call HandleCommands
 	INVOKE crt_printf, OFFSET msg
+	call Parse
 
 	INVOKE ExitProcess, 0
 main ENDP

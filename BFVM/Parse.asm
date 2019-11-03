@@ -1,27 +1,14 @@
-parse PROC
+INCLUDE C:\masm32\include\masm32rt.inc
+;INCLUDELIB C:\masm32\lib\msvcrt.lib
 
-Loop:
-	mov al, [eax]
-	.IF al == 0
-		jmp Return
-	.ELSEIF al == '>'
-		;TODO
-	.ELSEIF al == '<'
-		;TODO
-	.ELSEIF al == '+'
-		;TODO
-	.ELSEIF al == '-'
-		;TODO
-	.ELSEIF al == '.'
-		;TODO
-	.ELSEIF al == ','
-		;TODO
-	.ELSEIF al == '['
-		;TODO
-	.ELSEIF al == ']'
-		;TODO
+.DATA
+s_format BYTE "%s", 10, 0	; TODO: to delete
+parse_msg BYTE "parsing", 10, 0 ; TODO: to delete
 
-Return:
+.CODE
+Parse PROC
+	INVOKE crt_printf, OFFSET s_format, ADDR parse_msg
+	
 	ret
-
-parse ENDP
+Parse ENDP
+END

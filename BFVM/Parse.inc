@@ -1,1 +1,12 @@
+; Include file for Parse.asm (Parse.inc)
 
+OPTION CASEMAP:NONE
+
+;INCLUDE File.inc
+
+.NOLIST
+;----------------------------------------
+; Procedure Prototypes
+;----------------------------------------
+Parse PROTO
+.LIST
