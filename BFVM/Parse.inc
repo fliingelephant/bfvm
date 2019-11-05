@@ -8,5 +8,5 @@ OPTION CASEMAP:NONE
 ;----------------------------------------
 ; Procedure Prototypes
 ;----------------------------------------
-Parse PROTO
+Interprete PROTO
 .LIST

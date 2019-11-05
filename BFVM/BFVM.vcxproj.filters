@@ -34,5 +34,8 @@
     <None Include="Parse.inc">
       <Filter>头文件</Filter>
     </None>
+    <None Include="common.inc">
+      <Filter>头文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

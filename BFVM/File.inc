@@ -7,4 +7,5 @@ OPTION CASEMAP:NONE
 ; Procedure Prototypes
 ;----------------------------------------
 HandleCommands  PROTO
+ReadToBuffer PROTO
 .LIST

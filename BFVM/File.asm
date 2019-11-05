@@ -1,11 +1,17 @@
 INCLUDE C:\masm32\include\masm32rt.inc
+INCLUDELIB C:\masm32\lib\msvcrt.lib
 
+INCLUDE common.inc
 
 .DATA
-no_arg_tip BYTE "TODO: no_arg_tip", 10, 0
-help_tip BYTE "TODO: help_tip", 10, 0
-help_flag BYTE "-h", 10, 0
-open_file_emsg BYTE "TODO: open_file_emsg"
+no_arg_tip BYTE "You can run",10, "  'BFVM.exe \PATH\TO\YOUR\FILE' to inteprete your brainfuck source code;", 10,
+		"Or run", 10, "  'BFVM.exe -h' for help.",0
+help_tip BYTE "This is a BrainFuck intepreter implemented with masm.", 10,
+		"You can run",10, "  'BFVM.exe \PATH\TO\YOUR\FILE' to inteprete your brainfuck source code.", 0
+help_flag BYTE "-h", 0
+h_flag BYTE "h", 0
+h_tip BYTE "Failed to recognize the argument 'h', do you mean '-h'?", 0
+open_file_emsg BYTE "Failed to access file '%s'.", 0
 
 Argsc DWORD ?    ; number of command line arguments
 ArgsvList DWORD 0
@@ -14,10 +20,11 @@ s_format BYTE "%s", 10, 0	; TODO: to delete
 d_format BYTE "%d", 10, 0	; TODO: to delete
 
 FileHandle DWORD ?	; file handle
-FileLine DWORD ?
+FileBuffer BYTE 20480 DUP(0)
 FileEndFlag BYTE 0
 
 .CODE
+
 ; ---------------------------------------------------
 str_cmp PROC USES eax edx esi edi,
 	string1: PTR BYTE,
@@ -63,16 +70,18 @@ HandleCommands PROC USES eax ebx ecx edx esi
 	; the second argument
 	add esi, 4
 	INVOKE WideCharToMultiByte, 0, 0, [esi], -1, OFFSET argument, SIZEOF argument, 0, 0
-	INVOKE crt_printf, OFFSET s_format, ADDR argument
+	;INVOKE crt_printf, OFFSET s_format, ADDR argument
 	; TODO
-	INVOKE str_cmp, ADDR argument, ADDR help_flag
+	INVOKE str_cmp, OFFSET argument, OFFSET help_flag
 	je HelpTips
+	INVOKE str_cmp, OFFSET argument, OFFSET h_flag
+	je HTips
 
 	; try to open the file and give the handle
 	INVOKE CreateFile, OFFSET argument, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
 	cmp eax, INVALID_HANDLE_VALUE
-	;je OpenFileError
-	;mov FileHandle, eax
+	je OpenFileError
+	mov FileHandle, eax
 
 	; free the memory occupied by CommandLineToArgvW
 	INVOKE LocalFree, DWORD PTR [ArgsvList]
@@ -86,48 +95,45 @@ HandleCommands PROC USES eax ebx ecx edx esi
 		INVOKE crt_printf, OFFSET help_tip
 		ret
 
+	HTips:
+		INVOKE crt_printf, OFFSET h_tip
+		ret
+
 	OpenFileError:
-		INVOKE StdOut, OFFSET open_file_emsg
+		INVOKE crt_printf, OFFSET open_file_emsg, ADDR argument
 		INVOKE ExitProcess, 0
 
 HandleCommands ENDP
 
 ;----------------------------------------------------
-ReadLine PROC USES ebx ecx edx esi
+ReadToBuffer PROC USES ebx ecx edx esi
 ;
-; read a line from file, put it to FileLine, return the length
+; 
 ;----------------------------------------------------
 	LOCAL readCount: DWORD
-	mov esi, OFFSET FileLine
+	mov esi, OFFSET FileBuffer
 	mov ebx, 0
 
-	ReadLine_LOOP:
+	ReadToBuffer_LOOP:
 	INVOKE ReadFile, FileHandle, esi, 1, ADDR readCount, 0
 
 	;reach the end or a newline
 	cmp readCount, 1
-	jl ReadLine_END
+	jl ReadToBuffer_END
 	mov al, [esi]
 	cmp al, 13
-	je ReadLine_LOOP
-	cmp al, 10
-	je ReadLine_ENDLine
+	je ReadToBuffer_LOOP
+	.IF al != 10
+		inc esi
+		inc ebx
+	.ENDIF
+	jmp ReadToBuffer_LOOP
 
-	inc esi
-	inc ebx
-	jmp ReadLine_LOOP
-
-	ReadLine_END:
+	ReadToBuffer_END:
 	mov FileEndFlag, 1
 	mov al, 0
 	mov [esi], al
 	mov eax, ebx
 	ret
-	ReadLine_ENDLine:
-	mov al, 0
-	mov [esi], al
-	mov eax, ebx
-	ret
-ReadLine ENDP
-
+ReadToBuffer ENDP
 END
