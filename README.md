@@ -1,6 +1,6 @@
 # BFVM
 
-#### Course project for Assembly Programming, 2019 Fall, THUSE
+#### A toy BF intepreter implemented in 32bit-wasm
 
 You can run ```BFVM.exe -h``` for help,
 
